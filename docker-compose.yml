@@ -1,0 +1,52 @@
+version: '3'
+
+volumes:
+  amplet_config:
+  amplet_rabbit:
+  collector_rabbit:
+  collector_postgre:
+  collector_influx:
+  nntsc_config:
+  amppki_config:
+
+services:
+  amplet:
+    build: amplet2
+    hostname: amplet
+    links: 
+      - collector
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    network_mode: "bridge"
+    ports:
+      - "8869:8869"   # amplet control socket
+      - "15672:15672" # rabbitmq management ui
+    volumes:
+      - "amplet_config:/etc/amplet2"
+      - "amplet_rabbit:/var/lib/rabbitmq"
+      - "amppki_config:/etc/amppki:ro"
+
+  collector:
+    build: collector
+    hostname: collector
+    dns: 
+      - 1.1.1.1
+      - 8.8.8.8
+    network_mode: "bridge"
+    ports:
+      - "7655:7655"   # ampca
+      - "5672:5672"   # rabbit
+      - "5671:5671"   # rabbit ssl
+      - "15671:15672" # rabbitmq management ui
+      - "61234:61234" # nntsc
+      - "8086:8086"   # influxdb
+      - "5432:5432"   # postgresql
+      - "80:80"       # apache
+    volumes:
+      - "collector_rabbit:/var/lib/rabbitmq"
+      - "collector_postgre:/var/lib/postgresql"
+      - "collector_influx:/var/lib/influxdb"
+      - "nntsc_config:/etc/nntsc"
+      - "amppki_config:/etc/amppki"
+

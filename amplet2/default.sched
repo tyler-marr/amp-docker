@@ -1,0 +1,18 @@
+targets:
+  dns: &dnsservers [ 1.1.1.1, 8.8.8.8 ]
+  web: &web [ wand.net.nz, google.com ]
+
+tests:
+  - test: icmp
+    target: *web
+    frequency: 10
+    args: -r
+
+  - test: dns
+    target: *dnsservers
+    frequency: 10
+    args: -q wand.net.nz -c IN -t AAAA
+
+  - test: traceroute
+    target: *web
+    frequency: 10
