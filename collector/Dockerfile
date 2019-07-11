@@ -23,7 +23,7 @@ RUN echo deb https://dl.bintray.com/rabbitmq-erlang/debian `lsb_release -c -s` e
         > /etc/apt/sources.list.d/bintray.rabbitmq.list
 
 RUN mkdir -p /etc/rabbitmq \
-	&& echo NODENAME=rabbit@collector > /etc/rabbitmq/rabbitmq-env.conf
+    && echo NODENAME=rabbit@collector > /etc/rabbitmq/rabbitmq-env.conf
 
 # Prepare amppki, nntsc, and ampweb install
 RUN wget -qO- "https://bintray.com/user/downloadSubjectPublicKey?username=wand" \
@@ -38,7 +38,7 @@ RUN echo "ampy	ampy/views_password	password	guest" | debconf-set-selections
 
 # Install main service dependencies
 RUN apt-get update \
-	&& apt-get install -y --no-install-recommends \
+    && apt-get install -y --no-install-recommends \
         postgresql \
         influxdb \
         memcached \
@@ -64,10 +64,10 @@ RUN echo "127.0.0.1\tcollector" >> /etc/hosts \
     && rabbitmq-server -detached \
     && DEBIAN_FRONTEND=noninteractive \
         apt-get install -y --no-install-recommends \
-                -o DPkg::Options::="--force-confold" \
-                amppki \
-                nntsc \
-                amp-web \
+            -o DPkg::Options::="--force-confold" \
+            amppki \
+            nntsc \
+            amp-web \
     && service postgresql stop \
     && service influxdb stop \
     && rabbitmqctl stop

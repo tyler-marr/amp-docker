@@ -1,0 +1,12 @@
+# Grafana datasource provisioning file
+apiVersion: 1
+
+datasources:
+  - name: "AMP Collector - InfluxDB"
+    type: influxdb
+    access: proxy
+    url: "http://collector:8086"
+    database: nntsc
+    isDefault: true
+    jsonData:
+      httpMode: POST

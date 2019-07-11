@@ -8,8 +8,26 @@ volumes:
   collector_influx:
   nntsc_config:
   amppki_config:
+  grafana_config:
 
 services:
+  grafana:
+    build: grafana
+    hostname: grafana
+    links:
+      - collector
+    dns: 
+      - 1.1.1.1
+      - 8.8.8.8
+    network_mode: "bridge"
+    environment:
+      - "GF_SERVER_ROOT_URL=http://localhost"
+      - "GF_SECURITY_ADMIN_PASSWORD=guest"
+    ports:
+      - "3000:3000"   # grafana ui
+    volumes:
+      - "grafana_config:/var/lib/grafana"
+
   amplet:
     build: amplet2
     hostname: amplet
@@ -20,7 +38,7 @@ services:
       - 8.8.8.8
     network_mode: "bridge"
     ports:
-      - "8869:8869"   # amplet control socket
+      - "8869:8869"   # amplet control
       - "15672:15672" # rabbitmq management ui
     volumes:
       - "amplet_config:/etc/amplet2"
@@ -35,14 +53,14 @@ services:
       - 8.8.8.8
     network_mode: "bridge"
     ports:
-      - "7655:7655"   # ampca
-      - "5672:5672"   # rabbit
-      - "5671:5671"   # rabbit ssl
-      - "15671:15672" # rabbitmq management ui
-      - "61234:61234" # nntsc
-      - "8086:8086"   # influxdb
-      - "5432:5432"   # postgresql
+      - "15671:15672" # rabbit management ui
       - "80:80"       # apache
+      #- "7655:7655"   # ampca
+      #- "5672:5672"   # rabbit
+      #- "5671:5671"   # rabbit ssl
+      #- "61234:61234" # nntsc
+      #- "8086:8086"   # influxdb
+      #- "5432:5432"   # postgresql
     volumes:
       - "collector_rabbit:/var/lib/rabbitmq"
       - "collector_postgre:/var/lib/postgresql"

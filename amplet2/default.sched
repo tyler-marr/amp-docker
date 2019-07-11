@@ -5,14 +5,14 @@ targets:
 tests:
   - test: icmp
     target: *web
-    frequency: 10
+    frequency: 600
     args: -r
 
   - test: dns
     target: *dnsservers
-    frequency: 10
+    frequency: 600
     args: -q wand.net.nz -c IN -t AAAA
 
   - test: traceroute
     target: *web
-    frequency: 10
+    frequency: 600

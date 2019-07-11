@@ -1,0 +1,13 @@
+# Grafana dashboard provisioning file
+apiVersion: 1
+
+providers:
+  - name: "My Fancy Dashboard"
+    orgId: 1
+    folder: ''
+    type: file
+    disableDeletion: true
+    editable: false
+    updateIntervalSeconds: 60
+    options:
+      path: /etc/grafana/provisioning/dashboards/my-fancy-dashboard.json
