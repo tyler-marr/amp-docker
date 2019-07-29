@@ -1,4 +1,7 @@
 #!/bin/bash
+
+# This script will build a standalone image for any subfolder, and tag it as latest.
+
 if [ $# -eq 0 ]; then
 	echo USAGE: `basename "$0"` <folder> [tag]
 	exit 1

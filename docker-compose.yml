@@ -54,13 +54,13 @@ services:
     network_mode: "bridge"
     ports:
       - "15671:15672" # rabbit management ui
-      - "80:80"       # apache
+      - "80:80"       # apache - ampweb
       #- "7655:7655"   # ampca
       #- "5672:5672"   # rabbit
       #- "5671:5671"   # rabbit ssl
       #- "61234:61234" # nntsc
-      #- "8086:8086"   # influxdb
-      #- "5432:5432"   # postgresql
+      - "8086:8086"   # influxdb
+      - "5432:5432"   # postgresql
     volumes:
       - "collector_rabbit:/var/lib/rabbitmq"
       - "collector_postgre:/var/lib/postgresql"

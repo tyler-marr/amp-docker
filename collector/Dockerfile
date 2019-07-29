@@ -102,6 +102,11 @@ RUN chmod +x /etc/service/*/run
 COPY rabbitmq.config /etc/rabbitmq/rabbitmq.config
 COPY ampweb.ini /etc/ampweb/production.ini
 
+# These configs allow remote access for the 'cuz' user, with any password
+COPY postgresql.conf /etc/postgresql/10/main/postgresql.conf
+COPY pg_hba.conf /etc/postgresql/10/main/pg_hba.conf
+RUN chown -R postgres:postgres /etc/postgresql/10/main
+
 # Change the homepage on port 80 to redirect to ampweb
 COPY redirect-to-ampweb.html /var/www/html/index.html
 

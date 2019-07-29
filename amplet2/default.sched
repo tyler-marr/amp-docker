@@ -3,16 +3,42 @@ targets:
   web: &web [ wand.net.nz, google.com ]
 
 tests:
+  # a selection of targets both near and far
   - test: icmp
-    target: *web
-    frequency: 600
-    args: -r
+    target: [afrinic.net, cloud.google.com, download.microsoft.com, www.cloudflare.com, wand.net.nz]
+    start: 0
+    frequency: 60
 
-  - test: dns
-    target: *dnsservers
-    frequency: 600
-    args: -q wand.net.nz -c IN -t AAAA
-
+  # fairly long and sometimes interesting paths
   - test: traceroute
-    target: *web
+    target: [afrinic.net, a.root-servers.net]
+    start: 30
     frequency: 600
+    args: -a -s 60
+
+  # nearby DNS
+  - test: dns
+    target: [ns1.dns.net.nz]
+    start: 10
+    frequency: 300
+    args: -q dns.net.nz -t NS
+
+  # further away DNS
+  - test: dns
+    target: [a.root-servers.net]
+    start: 11
+    frequency: 300
+    args: -q example.com -t NS
+
+  # a webpage
+  - test: http
+    start: 45
+    frequency: 600
+    args: -u https://wand.net.nz
+
+  # hit port 443 on the same webserver
+  - test: tcpping
+    target: wand.net.nz
+    start: 40
+    frequency: 60
+    args: -P 443
