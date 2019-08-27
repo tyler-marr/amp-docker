@@ -68,3 +68,47 @@ services:
       - "nntsc_config:/etc/nntsc"
       - "amppki_config:/etc/amppki"
 
+    # === Flink stuff ===
+
+  jobmanager:
+    image: flink:1.8.1-scala_2.11
+    expose:
+      - "6123"      # RPC port
+    ports:
+      - "8081:8081" # Web client
+    dns: 
+      - 1.1.1.1
+      - 8.8.8.8
+    network_mode: "bridge"
+    links:
+      - collector
+    command: jobmanager
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+    volumes:
+      - "./flink/log4j-console.properties:/opt/flink/conf/log4j-console.properties"
+      - "./flink/flink-conf.yaml:/opt/flink/conf/flink-conf.yaml"
+      - "./flink/amp-analyser.properties:/opt/flink/conf/amp-analyser.properties"
+      - "./datasets/:/opt/flink/data"
+
+  taskmanager:
+    image: flink:1.8.1-scala_2.11
+    expose:
+      - "6121"      # Data port
+      - "6122"      # RPC port
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    network_mode: "bridge"
+    depends_on:
+      - jobmanager
+    command: taskmanager
+    links:
+      - "jobmanager:jobmanager"
+      - collector
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+    volumes:
+      - "./flink/log4j-console.properties:/opt/flink/conf/log4j-console.properties"
+      - "./flink/flink-conf.yaml:/opt/flink/conf/flink-conf.yaml"
+      - "./datasets/:/opt/flink/data"
