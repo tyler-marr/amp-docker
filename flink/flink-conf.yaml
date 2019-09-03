@@ -10,3 +10,6 @@ taskmanager.heap.size: 1024m
 taskmanager.numberOfTaskSlots: 1
 web.log.path: /opt/flink/log/output.log
 taskmanager.log.path: /opt/flink/log/output.log
+
+state.savepoints.dir: hdfs://hdfs-master:9000/savepoints/
+state.checkpoints.dir: hdfs://hdfs-master:9000/checkpoints/

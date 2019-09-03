@@ -10,24 +10,10 @@ volumes:
   amppki_config:
   grafana_config:
 
-services:
-  grafana:
-    build: grafana
-    hostname: grafana
-    links:
-      - collector
-    dns: 
-      - 1.1.1.1
-      - 8.8.8.8
-    network_mode: "bridge"
-    environment:
-      - "GF_SERVER_ROOT_URL=http://localhost"
-      - "GF_SECURITY_ADMIN_PASSWORD=guest"
-    ports:
-      - "3000:3000"   # grafana ui
-    volumes:
-      - "grafana_config:/var/lib/grafana"
+  #hdfs_data:
 
+services:
+    # === Amp stuff ===
   amplet:
     build: amplet2
     hostname: amplet
@@ -38,7 +24,7 @@ services:
       - 8.8.8.8
     network_mode: "bridge"
     ports:
-      - "8869:8869"   # amplet control
+      #- "8869:8869"   # amplet control
       - "15672:15672" # rabbitmq management ui
     volumes:
       - "amplet_config:/etc/amplet2"
@@ -61,6 +47,7 @@ services:
       #- "61234:61234" # nntsc
       - "8086:8086"   # influxdb
       - "5432:5432"   # postgresql
+      - "11211:11211" # memcached
     volumes:
       - "collector_rabbit:/var/lib/rabbitmq"
       - "collector_postgre:/var/lib/postgresql"
@@ -68,12 +55,31 @@ services:
       - "nntsc_config:/etc/nntsc"
       - "amppki_config:/etc/amppki"
 
+    # === Just grafana ===
+  grafana:
+    build: grafana
+    hostname: grafana
+    links:
+      - collector
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    network_mode: "bridge"
+    environment:
+      - "GF_SERVER_ROOT_URL=http://localhost"
+      - "GF_SECURITY_ADMIN_PASSWORD=guest"
+    ports:
+      - "3000:3000"   # grafana ui
+    volumes:
+      - "grafana_config:/var/lib/grafana"
+
     # === Flink stuff ===
 
   jobmanager:
-    image: flink:1.8.1-scala_2.11
-    expose:
-      - "6123"      # RPC port
+    build: flink
+    command: jobmanager
+    #expose:
+    #  - "6123"      # RPC port
     ports:
       - "8081:8081" # Web client
     dns: 
@@ -82,7 +88,7 @@ services:
     network_mode: "bridge"
     links:
       - collector
-    command: jobmanager
+      - hdfs-master
     environment:
       - JOB_MANAGER_RPC_ADDRESS=jobmanager
     volumes:
@@ -92,23 +98,50 @@ services:
       - "./datasets/:/opt/flink/data"
 
   taskmanager:
-    image: flink:1.8.1-scala_2.11
-    expose:
-      - "6121"      # Data port
-      - "6122"      # RPC port
+    build: flink
+    command: taskmanager
+    #expose:
+      #- "6121"      # Data port
+      #- "6122"      # RPC port
     dns:
       - 1.1.1.1
       - 8.8.8.8
     network_mode: "bridge"
     depends_on:
       - jobmanager
-    command: taskmanager
     links:
-      - "jobmanager:jobmanager"
+      - jobmanager
       - collector
+      - hdfs-master
     environment:
       - JOB_MANAGER_RPC_ADDRESS=jobmanager
     volumes:
       - "./flink/log4j-console.properties:/opt/flink/conf/log4j-console.properties"
       - "./flink/flink-conf.yaml:/opt/flink/conf/flink-conf.yaml"
+      - "./flink/amp-analyser.properties:/opt/flink/conf/amp-analyser.properties"
       - "./datasets/:/opt/flink/data"
+
+    # === Hadoop stuff ===
+  hdfs-master:
+    build: hadoop
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    network_mode: "bridge"
+    ports:
+      - "50070:50070"   # Namenode web
+    expose:
+      - "9000"   # API port
+    command: /start-namenode
+
+  hdfs-slave:
+    build: hadoop
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    network_mode: "bridge"
+    links:
+      - hdfs-master
+    environment:
+      - "NAMENODE_URI=hdfs://hdfs-master:9000"
+    command: /start-datanode
