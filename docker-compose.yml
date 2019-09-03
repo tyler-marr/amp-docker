@@ -12,6 +12,12 @@ volumes:
 
   #hdfs_data:
 
+networks:
+  amplets:
+  grafana:
+  flink_cluster:
+  hdfs_cluster:
+
 services:
     # === Amp stuff ===
   amplet:
@@ -21,12 +27,8 @@ services:
       - NET_RAW
       - NET_ADMIN
       - CAP_NET_BIND_SERVICE
-    links: 
-      - collector
-    dns:
-      - 1.1.1.1
-      - 8.8.8.8
-    network_mode: "bridge"
+    networks:
+      - amplets
     ports:
       #- "8869:8869"   # amplet control
       - "15672:15672" # rabbitmq management ui
@@ -38,10 +40,10 @@ services:
   collector:
     build: collector
     hostname: collector
-    dns: 
-      - 1.1.1.1
-      - 8.8.8.8
-    network_mode: "bridge"
+    networks:
+      - amplets
+      - grafana
+      - flink_cluster
     ports:
       - "15671:15672" # rabbit management ui
       - "80:80"       # apache - ampweb
@@ -63,12 +65,8 @@ services:
   grafana:
     build: grafana
     hostname: grafana
-    links:
-      - collector
-    dns:
-      - 1.1.1.1
-      - 8.8.8.8
-    network_mode: "bridge"
+    networks:
+      - grafana
     environment:
       - "GF_SERVER_ROOT_URL=http://localhost"
       - "GF_SECURITY_ADMIN_PASSWORD=guest"
@@ -86,13 +84,9 @@ services:
     #  - "6123"      # RPC port
     ports:
       - "8081:8081" # Web client
-    dns: 
-      - 1.1.1.1
-      - 8.8.8.8
-    network_mode: "bridge"
-    links:
-      - collector
-      - hdfs-master
+    networks:
+      - flink_cluster
+      - hdfs_cluster
     environment:
       - JOB_MANAGER_RPC_ADDRESS=jobmanager
     volumes:
@@ -107,16 +101,9 @@ services:
     #expose:
       #- "6121"      # Data port
       #- "6122"      # RPC port
-    dns:
-      - 1.1.1.1
-      - 8.8.8.8
-    network_mode: "bridge"
-    depends_on:
-      - jobmanager
-    links:
-      - jobmanager
-      - collector
-      - hdfs-master
+    networks:
+      - flink_cluster
+      - hdfs_cluster
     environment:
       - JOB_MANAGER_RPC_ADDRESS=jobmanager
     volumes:
@@ -128,10 +115,8 @@ services:
     # === Hadoop stuff ===
   hdfs-master:
     build: hadoop
-    dns:
-      - 1.1.1.1
-      - 8.8.8.8
-    network_mode: "bridge"
+    networks:
+      - hdfs_cluster
     ports:
       - "50070:50070"   # Namenode web
     expose:
@@ -140,12 +125,8 @@ services:
 
   hdfs-slave:
     build: hadoop
-    dns:
-      - 1.1.1.1
-      - 8.8.8.8
-    network_mode: "bridge"
-    links:
-      - hdfs-master
+    networks:
+      - hdfs_cluster
     environment:
       - "NAMENODE_URI=hdfs://hdfs-master:9000"
     command: /start-datanode
