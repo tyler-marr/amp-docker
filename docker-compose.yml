@@ -17,6 +17,10 @@ services:
   amplet:
     build: amplet2
     hostname: amplet
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+      - CAP_NET_BIND_SERVICE
     links: 
       - collector
     dns:
