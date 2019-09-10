@@ -29,9 +29,6 @@ services:
       - CAP_NET_BIND_SERVICE
     networks:
       - amplets
-    ports:
-      #- "8869:8869"   # amplet control
-      - "15672:15672" # rabbitmq management ui
     volumes:
       - "amplet_config:/etc/amplet2"
       - "amplet_rabbit:/var/lib/rabbitmq"
@@ -45,15 +42,8 @@ services:
       - grafana
       - flink_cluster
     ports:
-      - "15671:15672" # rabbit management ui
-      - "80:80"       # apache - ampweb
-      #- "7655:7655"   # ampca
-      #- "5672:5672"   # rabbit
-      #- "5671:5671"   # rabbit ssl
-      #- "61234:61234" # nntsc
-      - "8086:8086"   # influxdb
-      - "5432:5432"   # postgresql
-      - "11211:11211" # memcached
+      - "8086:8086"   # InfluxDB API
+      - "5432:5432"   # PostgreSQL API
     volumes:
       - "collector_rabbit:/var/lib/rabbitmq"
       - "collector_postgre:/var/lib/postgresql"
@@ -71,7 +61,7 @@ services:
       - "GF_SERVER_ROOT_URL=http://localhost"
       - "GF_SECURITY_ADMIN_PASSWORD=guest"
     ports:
-      - "3000:3000"   # grafana ui
+      - "3000:3000"   # Grafana web
     volumes:
       - "grafana_config:/var/lib/grafana"
 
@@ -80,10 +70,8 @@ services:
   jobmanager:
     build: flink
     command: jobmanager
-    #expose:
-    #  - "6123"      # RPC port
     ports:
-      - "8081:8081" # Web client
+      - "8081:8081" # Flink web
     networks:
       - flink_cluster
       - hdfs_cluster
@@ -98,9 +86,6 @@ services:
   taskmanager:
     build: flink
     command: taskmanager
-    #expose:
-      #- "6121"      # Data port
-      #- "6122"      # RPC port
     networks:
       - flink_cluster
       - hdfs_cluster
@@ -119,8 +104,6 @@ services:
       - hdfs_cluster
     ports:
       - "50070:50070"   # Namenode web
-    expose:
-      - "9000"   # API port
     command: /start-namenode
 
   hdfs-slave:

@@ -74,5 +74,8 @@ COPY rabbitmq.config /etc/rabbitmq/rabbitmq.config
 ENV COLLECTOR_ADDRESS collector
 ENV ROOTCERT /etc/amppki/cacert.pem
 
+# RabbitMQ management UI
+EXPOSE 15672
+
 COPY docker-entrypoint.sh /
 CMD ["/docker-entrypoint.sh"]

@@ -110,4 +110,17 @@ RUN chown -R postgres:postgres /etc/postgresql/10/main
 # Change the homepage on port 80 to redirect to ampweb
 COPY redirect-to-ampweb.html /var/www/html/index.html
 
+# ampca
+EXPOSE 7655
+# nntsc
+EXPOSE 61234
+# ampweb
+EXPOSE 80
+# RabbitMQ management UI
+EXPOSE 15672
+# InfluxDB API
+EXPOSE 8086
+# PostgreSQL API
+EXPOSE 5432
+
 CMD ["/sbin/my_init"]
