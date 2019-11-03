@@ -42,8 +42,10 @@ services:
       - grafana
       - flink_cluster
     ports:
+      - "80:80"       # Web view
       - "8086:8086"   # InfluxDB API
       - "5432:5432"   # PostgreSQL API
+      - "61234:61234" # Client API
     volumes:
       - "collector_rabbit:/var/lib/rabbitmq"
       - "collector_postgre:/var/lib/postgresql"
@@ -80,7 +82,7 @@ services:
     volumes:
       - "./flink/log4j-console.properties:/opt/flink/conf/log4j-console.properties"
       - "./flink/flink-conf.yaml:/opt/flink/conf/flink-conf.yaml"
-      - "./flink/amp-analyser.properties:/opt/flink/conf/amp-analyser.properties"
+      - "./flink/streamevmon.properties:/opt/flink/conf/streamevmon.properties"
       - "./datasets/:/opt/flink/data"
 
   taskmanager:
@@ -94,7 +96,7 @@ services:
     volumes:
       - "./flink/log4j-console.properties:/opt/flink/conf/log4j-console.properties"
       - "./flink/flink-conf.yaml:/opt/flink/conf/flink-conf.yaml"
-      - "./flink/amp-analyser.properties:/opt/flink/conf/amp-analyser.properties"
+      - "./flink/streamevmon.properties:/opt/flink/conf/streamevmon.properties"
       - "./datasets/:/opt/flink/data"
 
     # === Hadoop stuff ===

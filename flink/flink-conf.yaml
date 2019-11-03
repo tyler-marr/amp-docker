@@ -13,3 +13,7 @@ taskmanager.log.path: /opt/flink/log/output.log
 
 state.savepoints.dir: hdfs://hdfs-master:9000/savepoints/
 state.checkpoints.dir: hdfs://hdfs-master:9000/checkpoints/
+
+restart-strategy: fixed-delay
+restart-strategy.fixed-delay.attempts: 4
+restart-strategy.fixed-delay.delay: 1 s
