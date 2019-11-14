@@ -60,7 +60,7 @@ RUN echo "127.0.0.1\tcollector" >> /etc/hosts \
 COPY nntsc.conf /etc/nntsc/nntsc.conf
 RUN echo "127.0.0.1\tcollector" >> /etc/hosts \
     && service postgresql start \
-    && service influxdb start \
+    && (service influxdb start || true) \
     && rabbitmq-server -detached \
     && DEBIAN_FRONTEND=noninteractive \
         apt-get install -y --no-install-recommends \
