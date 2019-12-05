@@ -103,6 +103,7 @@ COPY rabbitmq.config /etc/rabbitmq/rabbitmq.config
 COPY ampweb.ini /etc/ampweb/production.ini
 
 # These configs allow remote access for the 'cuz' user, with any password
+# These should be more secure in a production environment
 COPY postgresql.conf /etc/postgresql/10/main/postgresql.conf
 COPY pg_hba.conf /etc/postgresql/10/main/pg_hba.conf
 RUN chown -R postgres:postgres /etc/postgresql/10/main

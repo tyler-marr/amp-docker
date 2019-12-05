@@ -1,7 +1,7 @@
 version: '3'
 
 volumes:
-  amplet_config:
+  amplet_keys:
   amplet_rabbit:
   collector_rabbit:
   collector_postgre:
@@ -9,8 +9,6 @@ volumes:
   nntsc_config:
   amppki_config:
   grafana_config:
-
-  #hdfs_data:
 
 networks:
   amplets:
@@ -30,7 +28,7 @@ services:
     networks:
       - amplets
     volumes:
-      - "amplet_config:/etc/amplet2"
+      - "amplet_keys:/etc/amplet2/keys"
       - "amplet_rabbit:/var/lib/rabbitmq"
       - "amppki_config:/etc/amppki:ro"
 

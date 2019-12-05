@@ -11,7 +11,6 @@ until [[ -f /etc/amppki/certs/$COLLECTOR_ADDRESS.03.pem && -f $ROOTCERT ]]; do
 	sleep 15
 done
 
-#ln -sf /etc/amppki/certs/$COLLECTOR_ADDRESS.03.pem /etc/amplet2/keys/$COLLECTOR_ADDRESS.pem
 ln -sf /etc/amppki/cacert.pem /etc/amplet2/keys/$COLLECTOR_ADDRESS.pem
 
 # Trust the root CA certificate
@@ -41,7 +40,6 @@ echo "Starting amplet..."
 
 # Start rsyslog for amplet logging - this is redirected to /dev/stdout by the Dockerfile
 rsyslogd
-#touch /var/log/amplet2/amplet2.log
 tail --pid $$ -F /var/log/amplet2/amplet2.log &
 
 # Start the amplet
