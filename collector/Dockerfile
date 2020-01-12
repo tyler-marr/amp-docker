@@ -23,7 +23,7 @@ RUN echo deb https://dl.bintray.com/rabbitmq-erlang/debian `lsb_release -c -s` e
         > /etc/apt/sources.list.d/bintray.rabbitmq.list
 
 RUN mkdir -p /etc/rabbitmq \
-    && echo NODENAME=rabbit@collector > /etc/rabbitmq/rabbitmq-env.conf
+    && echo NODENAME=rabbit@amp-collector > /etc/rabbitmq/rabbitmq-env.conf
 
 # Prepare amppki, nntsc, and ampweb install
 RUN wget -qO- "https://bintray.com/user/downloadSubjectPublicKey?username=wand" \
@@ -32,7 +32,7 @@ RUN wget -qO- "https://bintray.com/user/downloadSubjectPublicKey?username=wand" 
 RUN echo deb https://dl.bintray.com/wand/amp `lsb_release -c -s` main \
         > /etc/apt/sources.list.d/bintray.wand.list
 
-RUN echo "amppki	amppki/fqdn	string	collector" | debconf-set-selections
+RUN echo "amppki	amppki/fqdn	string	amp-collector" | debconf-set-selections
 RUN echo "ampy	ampy/views_user	string	guest" | debconf-set-selections
 RUN echo "ampy	ampy/views_password	password	guest" | debconf-set-selections
 
@@ -49,7 +49,7 @@ RUN apt-get update \
 RUN rabbitmq-plugins enable rabbitmq_auth_mechanism_ssl rabbitmq_management
 
 # Get rabbitmqadmin from rabbitmq-server
-RUN echo "127.0.0.1\tcollector" >> /etc/hosts \
+RUN echo "127.0.0.1\tamp-collector" >> /etc/hosts \
     && rabbitmq-server -detached \
     && wget -qP /usr/local/bin localhost:15672/cli/rabbitmqadmin \
     && chmod +x /usr/local/bin/rabbitmqadmin \
@@ -58,7 +58,7 @@ RUN echo "127.0.0.1\tcollector" >> /etc/hosts \
 # Install main services
 # nntsc and ampy need extra things running during install
 COPY nntsc.conf /etc/nntsc/nntsc.conf
-RUN echo "127.0.0.1\tcollector" >> /etc/hosts \
+RUN echo "127.0.0.1\tamp-collector" >> /etc/hosts \
     && service postgresql start \
     && (service influxdb start || true) \
     && rabbitmq-server -detached \
@@ -124,4 +124,4 @@ EXPOSE 8086
 # PostgreSQL API
 EXPOSE 5432
 
-CMD ["/sbin/my_init"]
+ENTRYPOINT ["/sbin/my_init"]

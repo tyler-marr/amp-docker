@@ -71,11 +71,6 @@ COPY amplet.conf /etc/amplet2/clients/default.conf
 COPY default.sched /etc/amplet2/schedules/default.sched
 COPY rabbitmq.config /etc/rabbitmq/rabbitmq.config
 
-ENV COLLECTOR_ADDRESS collector
-ENV ROOTCERT /etc/amppki/cacert.pem
-
-# RabbitMQ management UI
-EXPOSE 15672
-
 COPY docker-entrypoint.sh /
-CMD ["/docker-entrypoint.sh"]
+#ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["/docker-entrypoint.sh"] 
