@@ -8,7 +8,8 @@ volumes:
 services:
     # === Amp stuff ===
   amplet:
-    build: amplet2
+    #build: amplet2
+    image: tylermarr/ampletest
     cap_add:
       - NET_RAW
       - NET_ADMIN
@@ -19,6 +20,9 @@ services:
       - "amplet_rabbit:/var/lib/rabbitmq"
     extra_hosts: 
       - "amp-collector:163.7.137.27"
+    environment: 
+      - "RUN_AMP=go"
+
 
 
   collector:
