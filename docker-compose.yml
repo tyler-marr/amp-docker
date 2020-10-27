@@ -8,8 +8,8 @@ volumes:
 services:
     # === Amp stuff ===
   amplet:
-    #build: amplet2
-    image: tylermarr/ampletest
+    build: amplet2
+    #image: tylermarr/ampletest
     cap_add:
       - NET_RAW
       - NET_ADMIN
@@ -35,7 +35,7 @@ services:
       - "5432:5432"   # PostgreSQL API
       - "61234:61234" # Client API
       # - "7655:7655"   # Ampca
-      # - "5671:5673"   # Rabbitmq
+      - "5671:5673"   # Rabbitmq
       # - "443:443"     # Collectorcollector
     # volumes:
     #   - "collector_rabbit:/var/lib/rabbitmq"

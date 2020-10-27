@@ -66,7 +66,7 @@ tail --pid $$ -F /var/log/amplet2/amplet2.log &
 # Start the amplet
 amplet2 &
 
-echo "Amplet started"
+echo "Amplet started as $!"
 
 # Check if either process has died, and quit the container if so
 # Nothing fancy, and supervisord would do a better job

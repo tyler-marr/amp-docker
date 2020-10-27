@@ -31,11 +31,16 @@ RUN wget -qO- https://bintray.com/user/downloadSubjectPublicKey?username=wand | 
 RUN echo deb https://dl.bintray.com/wand/amp `lsb_release -c -s` main \
 		> /etc/apt/sources.list.d/bintray.amplet2.list
 
+
+ADD http://launchpadlibrarian.net/410732834/libunbound8_1.9.0-2_amd64.deb libunbound8_1.9.0-2_amd64.deb
+RUN apt-get install -y ./libunbound8_1.9.0-2_amd64.deb
+COPY amplet2-client_0.9.12-1_amd64.deb amplet2-client_0.9.12-1_amd64.deb
 # Install rabbitmq and amplet2
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
 		rabbitmq-server \
-		amplet2-client
+		./amplet2-client_0.9.12-1_amd64.deb
+		#amplet2-client
 
 # Enable some plugins
 RUN rabbitmq-plugins enable rabbitmq_shovel rabbitmq_management

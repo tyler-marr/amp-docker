@@ -6,7 +6,8 @@ RUN apt-get update \
         wget \
         iputils-ping \
         net-tools \
-        locate
+        locate \
+        iproute2
 
 # Prepare InfluxDB install
 RUN wget -qO- https://repos.influxdata.com/influxdb.key | apt-key add -
